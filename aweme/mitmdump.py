@@ -2,7 +2,7 @@ import json
 import re
 from mitmproxy import ctx
 
-temp_path = 'D:\\PycharmProjects\\douyin\\aweme\\aweme_list.json'
+temp_path = 'D:\\PycharmProjects\\Douyin\\aweme\\aweme_list.json'
 
 
 def parse_para(data, para):
@@ -25,7 +25,7 @@ def parse_para(data, para):
 
 
 def response(flow):
-    if flow.request.url.startswith('https://aweme-lq.snssdk.com/aweme/v1/search/item'):
+    if flow.request.url.startswith('https://aweme-hl.snssdk.com/aweme/v1/search/item'):
         data = json.loads(flow.response.text)
         aweme_list = []
         for aweme in data.get('aweme_list'):
@@ -61,7 +61,7 @@ def response(flow):
             aweme_list.append(parse_para(aweme, para))
         with open(temp_path, 'w', encoding='utf-8') as file_obj:
             json.dump(aweme_list, file_obj, indent=4, ensure_ascii=False)
-    elif flow.request.url.startswith('https://aweme-lq.snssdk.com/aweme/v2/comment/list'):
+    elif flow.request.url.startswith('https://aweme-hl.snssdk.com/aweme/v2/comment/list'):
         with open(temp_path, encoding='utf-8') as file_obj:
             aweme_list = json.load(file_obj)
         aweme_id = re.findall('aweme_id=(\d+)&', flow.request.url)[0]

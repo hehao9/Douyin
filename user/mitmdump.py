@@ -1,7 +1,7 @@
 import json
 import re
 
-temp_path = 'D:\\PycharmProjects\\douyin\\user\\user.json'
+temp_path = 'D:\\PycharmProjects\\Douyin\\user\\user.json'
 
 
 def parse_para(data, para):
@@ -24,7 +24,7 @@ def parse_para(data, para):
 
 
 def response(flow):
-    if flow.request.url.startswith('https://aweme-eagle-lq.snssdk.com/aweme/v1/user'):  # 用户信息
+    if flow.request.url.startswith('https://aweme-eagle-hl.snssdk.com/aweme/v1/user'):  # 用户信息
         data = json.loads(flow.response.text)
         user = data.get('user')
         _user = {
@@ -45,57 +45,59 @@ def response(flow):
             'FRIENDS_LIST': [], }
         with open(temp_path, 'w', encoding='utf-8') as file_obj:
             json.dump(_user, file_obj, indent=4, ensure_ascii=False)
-    elif flow.request.url.startswith('https://api-lq.amemv.com/aweme/v1/aweme/post'):  # 最新视频
+    elif flow.request.url.startswith('https://api-hl.amemv.com/aweme/v1/aweme/post'):  # 最新视频
         with open(temp_path, encoding='utf-8') as file_obj:
             user = json.load(file_obj)
         user_id = re.findall('user_id=(\d+)&', flow.request.url)[0]
         if user['USER_ID'] == user_id:
             data = json.loads(flow.response.text)
             aweme_list = []
-            for aweme in data.get('aweme_list'):
-                para = {
-                    'MUSIC': ['music', 'play_url', 'uri'],
-                    'DURATION': ['duration'],
-                    'TITLE': ['author', 'nickname'],  # 昵称
-                    'CONTENT': ['desc'],  # 描述
-                    'COMMENT_COUNT': ['statistics', 'comment_count'],
-                    'COMMENT_CONTANT': [],
-                    'REPEAT_COUNT': ['statistics', 'share_count'],
-                    'LIKE_NUM': ['statistics', 'digg_count'],
-                    'SAME_CITY': [],
-                    'FIRST_PAGE': [],
-                    'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
-                    'AUTHOR_USER_ID': ['author_user_id'],
-                    'AWEME_ID': ['aweme_id'],
-                }
-                aweme_list.append(parse_para(aweme, para))
+            if data.get('aweme_list'):
+                for aweme in data.get('aweme_list'):
+                    para = {
+                        'MUSIC': ['music', 'play_url', 'uri'],
+                        'DURATION': ['duration'],
+                        'TITLE': ['author', 'nickname'],  # 昵称
+                        'CONTENT': ['desc'],  # 描述
+                        'COMMENT_COUNT': ['statistics', 'comment_count'],
+                        'COMMENT_CONTANT': [],
+                        'REPEAT_COUNT': ['statistics', 'share_count'],
+                        'LIKE_NUM': ['statistics', 'digg_count'],
+                        'SAME_CITY': [],
+                        'FIRST_PAGE': [],
+                        'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
+                        'AUTHOR_USER_ID': ['author_user_id'],
+                        'AWEME_ID': ['aweme_id'],
+                    }
+                    aweme_list.append(parse_para(aweme, para))
             user['DYNAMIC'] = aweme_list
         with open(temp_path, 'w', encoding='utf-8') as file_obj:
             json.dump(user, file_obj, indent=4, ensure_ascii=False)
-    elif flow.request.url.startswith('https://api-lq.amemv.com/aweme/v1/aweme/favorite'):  # 喜欢的作品
+    elif flow.request.url.startswith('https://api-hl.amemv.com/aweme/v1/aweme/favorite'):  # 喜欢的作品
         with open(temp_path, encoding='utf-8') as file_obj:
             user = json.load(file_obj)
         user_id = re.findall('user_id=(\d+)&', flow.request.url)[0]
         if user['USER_ID'] == user_id:
             data = json.loads(flow.response.text)
             aweme_list = []
-            for aweme in data.get('aweme_list'):
-                para = {
-                    'MUSIC': ['music', 'play_url', 'uri'],
-                    'DURATION': ['duration'],
-                    'TITLE': ['author', 'nickname'],  # 昵称
-                    'CONTENT': ['desc'],  # 描述
-                    'COMMENT_COUNT': ['statistics', 'comment_count'],
-                    'COMMENT_CONTANT': [],
-                    'REPEAT_COUNT': ['statistics', 'share_count'],
-                    'LIKE_NUM': ['statistics', 'digg_count'],
-                    'SAME_CITY': [],
-                    'FIRST_PAGE': [],
-                    'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
-                    'AUTHOR_USER_ID': ['author_user_id'],
-                    'AWEME_ID': ['aweme_id'],
-                }
-                aweme_list.append(parse_para(aweme, para))
+            if data.get('aweme_list'):
+                for aweme in data.get('aweme_list'):
+                    para = {
+                        'MUSIC': ['music', 'play_url', 'uri'],
+                        'DURATION': ['duration'],
+                        'TITLE': ['author', 'nickname'],  # 昵称
+                        'CONTENT': ['desc'],  # 描述
+                        'COMMENT_COUNT': ['statistics', 'comment_count'],
+                        'COMMENT_CONTANT': [],
+                        'REPEAT_COUNT': ['statistics', 'share_count'],
+                        'LIKE_NUM': ['statistics', 'digg_count'],
+                        'SAME_CITY': [],
+                        'FIRST_PAGE': [],
+                        'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
+                        'AUTHOR_USER_ID': ['author_user_id'],
+                        'AWEME_ID': ['aweme_id'],
+                    }
+                    aweme_list.append(parse_para(aweme, para))
             user['FAVORITE_WORKS'] = aweme_list
         with open(temp_path, 'w', encoding='utf-8') as file_obj:
             json.dump(user, file_obj, indent=4, ensure_ascii=False)
