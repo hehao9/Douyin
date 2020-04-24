@@ -15,6 +15,7 @@ desired_caps = {
     # 自动化测试Activity
     "appActivity": "com.ss.android.ugc.aweme.main.MainActivity",
     "automationName": "UiAutomator1",
+    "app": "D:\\PycharmProjects\\Douyin\\DouYin_v6.0.0.apk",
     # 再次启动不需要再次安装
     "noReset": True,
     # unicode键盘 我们可以输入中文
@@ -23,7 +24,7 @@ desired_caps = {
     "resetKeyboard": True
 }
 driver = webdriver.Remote(server, desired_caps)
-wait = WebDriverWait(driver, 10)
+wait = WebDriverWait(driver, 15)
 # 弹出框点击取消按钮
 try:
     driver.find_element_by_id('com.ss.android.ugc.aweme:id/sy')
