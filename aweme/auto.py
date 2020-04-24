@@ -1,3 +1,4 @@
+import os
 import time
 from appium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
@@ -6,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 server = 'http://localhost:4723/wd/hub'
+PATH = lambda p: os.path.abspath(os.path.join(os.path.dirname(__file__), p))
 desired_caps = {
     "platformName": "Android",
     "platformVersion": "5.1.1",
@@ -15,6 +17,7 @@ desired_caps = {
     # 自动化测试Activity
     "appActivity": "com.ss.android.ugc.aweme.main.MainActivity",
     "automationName": "UiAutomator1",
+    "app": "D:\\PycharmProjects\\Douyin\\DouYin_6.0.0.apk",
     # 再次启动不需要再次安装
     "noReset": True,
     # unicode键盘 我们可以输入中文
@@ -23,7 +26,7 @@ desired_caps = {
     "resetKeyboard": True
 }
 driver = webdriver.Remote(server, desired_caps)
-wait = WebDriverWait(driver, 10)
+wait = WebDriverWait(driver, 15)
 # 弹出框点击取消按钮
 try:
     driver.find_element_by_id('com.ss.android.ugc.aweme:id/sy')
@@ -52,6 +55,6 @@ for n in range(2):
     # 向上滑动，获取下一个视频
     time.sleep(1)
     size = driver.get_window_size()
-    driver.swipe(size['width']*0.5, size['height']*0.75, size['width']*0.5, size['height']*0.25, 500)
+    driver.swipe(size['width'] * 0.5, size['height'] * 0.75, size['width'] * 0.5, size['height'] * 0.25, 500)
 # 推出
 driver.quit()
