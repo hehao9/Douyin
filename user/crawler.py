@@ -1,7 +1,8 @@
+import csv
 import json
 import re
 
-temp_path = 'D:\\PycharmProjects\\Douyin\\user\\user.json'
+temp_path = 'D:\\PycharmProjects\\Douyin\\user\\users.csv'
 
 
 def parse_para(data, para):
@@ -9,22 +10,43 @@ def parse_para(data, para):
     for k, v in para.items():
         if v:
             for vl in v:
-                print(ret.get(k))
                 x = ret[k].get(vl) if ret.get(k) else data.get(vl)
-                if not x:
-                    ret[k] = ''
-                    break
+                if isinstance(x, dict):
+                    ret[k] = x
                 elif isinstance(x, list):
                     ret[k] = x[0]
                 else:
                     ret[k] = x
+                    break
         else:
             ret[k] = ''
     return ret
 
 
+def read_csv():
+    with open(temp_path, 'r', newline='', encoding='utf-8-sig') as csvfile:
+        dict_reader = csv.DictReader(csvfile)
+        return [r for r in dict_reader]
+
+
+def write_csv(rows):
+    with open(temp_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
+        dict_writer = csv.DictWriter(csvfile, fieldnames=list(rows[0].keys()))
+        dict_writer.writeheader()
+        dict_writer.writerows(rows)
+
+
+def append_csv(rows):
+    head = False if len(read_csv()) == 0 else True
+    with open(temp_path, 'a', newline='', encoding='utf-8-sig') as csvfile:
+        dict_writer = csv.DictWriter(csvfile, fieldnames=list(rows[0].keys()))
+        if not head:
+            dict_writer.writeheader()
+        dict_writer.writerows(rows)
+
+
 def response(flow):
-    if flow.request.url.startswith('https://aweme-eagle-hl.snssdk.com/aweme/v1/user'):  # 用户信息
+    if '/aweme/v1/user' in flow.request.url:  # 用户信息
         data = json.loads(flow.response.text)
         user = data.get('user')
         _user = {
@@ -43,61 +65,60 @@ def response(flow):
             'DYNAMIC': [],  # 近期发布过的视频
             'FAVORITE_WORKS': [],
             'FRIENDS_LIST': [], }
-        with open(temp_path, 'w', encoding='utf-8') as file_obj:
-            json.dump(_user, file_obj, indent=4, ensure_ascii=False)
-    elif flow.request.url.startswith('https://api-hl.amemv.com/aweme/v1/aweme/post'):  # 最新视频
-        with open(temp_path, encoding='utf-8') as file_obj:
-            user = json.load(file_obj)
+        append_csv([_user])
+    elif '/aweme/v1/aweme/post' in flow.request.url:  # 最新视频
+        user_list = read_csv()
         user_id = re.findall('user_id=(\d+)&', flow.request.url)[0]
-        if user['USER_ID'] == user_id:
-            data = json.loads(flow.response.text)
-            aweme_list = []
-            if data.get('aweme_list'):
-                for aweme in data.get('aweme_list'):
-                    para = {
-                        'MUSIC': ['music', 'play_url', 'uri'],
-                        'DURATION': ['duration'],
-                        'TITLE': ['author', 'nickname'],  # 昵称
-                        'CONTENT': ['desc'],  # 描述
-                        'COMMENT_COUNT': ['statistics', 'comment_count'],
-                        'COMMENT_CONTANT': [],
-                        'REPEAT_COUNT': ['statistics', 'share_count'],
-                        'LIKE_NUM': ['statistics', 'digg_count'],
-                        'SAME_CITY': [],
-                        'FIRST_PAGE': [],
-                        'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
-                        'AUTHOR_USER_ID': ['author_user_id'],
-                        'AWEME_ID': ['aweme_id'],
-                    }
-                    aweme_list.append(parse_para(aweme, para))
-            user['DYNAMIC'] = aweme_list
-        with open(temp_path, 'w', encoding='utf-8') as file_obj:
-            json.dump(user, file_obj, indent=4, ensure_ascii=False)
-    elif flow.request.url.startswith('https://api-hl.amemv.com/aweme/v1/aweme/favorite'):  # 喜欢的作品
-        with open(temp_path, encoding='utf-8') as file_obj:
-            user = json.load(file_obj)
+        for user in user_list:
+            if user['USER_ID'] == user_id:
+                data = json.loads(flow.response.text)
+                aweme_list = []
+                if data.get('aweme_list'):
+                    for aweme in data.get('aweme_list'):
+                        para = {
+                            'MUSIC': ['music', 'play_url', 'uri'],
+                            'DURATION': ['duration'],
+                            'TITLE': ['author', 'nickname'],  # 昵称
+                            'CONTENT': ['desc'],  # 描述
+                            'COMMENT_COUNT': ['statistics', 'comment_count'],
+                            'COMMENT_CONTANT': [],
+                            'REPEAT_COUNT': ['statistics', 'share_count'],
+                            'LIKE_NUM': ['statistics', 'digg_count'],
+                            'SAME_CITY': [],
+                            'FIRST_PAGE': [],
+                            'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
+                            'AUTHOR_USER_ID': ['author_user_id'],
+                            'AWEME_ID': ['aweme_id'],
+                        }
+                        aweme_list.append(parse_para(aweme, para))
+                user['DYNAMIC'] = aweme_list
+                break
+        write_csv(user_list)
+    elif '/aweme/v1/aweme/favorite' in flow.request.url:  # 喜欢的作品
+        user_list = read_csv()
         user_id = re.findall('user_id=(\d+)&', flow.request.url)[0]
-        if user['USER_ID'] == user_id:
-            data = json.loads(flow.response.text)
-            aweme_list = []
-            if data.get('aweme_list'):
-                for aweme in data.get('aweme_list'):
-                    para = {
-                        'MUSIC': ['music', 'play_url', 'uri'],
-                        'DURATION': ['duration'],
-                        'TITLE': ['author', 'nickname'],  # 昵称
-                        'CONTENT': ['desc'],  # 描述
-                        'COMMENT_COUNT': ['statistics', 'comment_count'],
-                        'COMMENT_CONTANT': [],
-                        'REPEAT_COUNT': ['statistics', 'share_count'],
-                        'LIKE_NUM': ['statistics', 'digg_count'],
-                        'SAME_CITY': [],
-                        'FIRST_PAGE': [],
-                        'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
-                        'AUTHOR_USER_ID': ['author_user_id'],
-                        'AWEME_ID': ['aweme_id'],
-                    }
-                    aweme_list.append(parse_para(aweme, para))
-            user['FAVORITE_WORKS'] = aweme_list
-        with open(temp_path, 'w', encoding='utf-8') as file_obj:
-            json.dump(user, file_obj, indent=4, ensure_ascii=False)
+        for user in user_list:
+            if user['USER_ID'] == user_id:
+                data = json.loads(flow.response.text)
+                aweme_list = []
+                if data.get('aweme_list'):
+                    for aweme in data.get('aweme_list'):
+                        para = {
+                            'MUSIC': ['music', 'play_url', 'uri'],
+                            'DURATION': ['duration'],
+                            'TITLE': ['author', 'nickname'],  # 昵称
+                            'CONTENT': ['desc'],  # 描述
+                            'COMMENT_COUNT': ['statistics', 'comment_count'],
+                            'COMMENT_CONTANT': [],
+                            'REPEAT_COUNT': ['statistics', 'share_count'],
+                            'LIKE_NUM': ['statistics', 'digg_count'],
+                            'SAME_CITY': [],
+                            'FIRST_PAGE': [],
+                            'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
+                            'AUTHOR_USER_ID': ['author_user_id'],
+                            'AWEME_ID': ['aweme_id'],
+                        }
+                        aweme_list.append(parse_para(aweme, para))
+                user['FAVORITE_WORKS'] = aweme_list
+                break
+        write_csv(user_list)
