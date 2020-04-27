@@ -1,29 +1,16 @@
-def parse_para(data, para):
-    ret = {}
-    for k, v in para.items():
-        if v:
-            for vl in v:
-                print(ret.get(k))
-                x = ret[k].get(vl) if ret.get(k) else data.get(vl)
-                if not x:
-                    ret[k] = ''
-                    break
-                elif isinstance(x, list):
-                    ret[k] = x[0]
-                else:
-                    ret[k] = x
-        else:
-            ret[k] = ''
-    return ret
+import re
+import uuid
 
+import requests
 
-_data = {
-    'name': 'hehao',
-    'age': [26, 18],
-    'marjor': {'one': 'java', 'two': ['python', 'other']},
-    'time': None,
-    'marjor2': {'one': 'java', 'two': None},
-    'marjor3': {'one': 'java', 'two': ''}
+url = 'https://www.iesdouyin.com/share/video/6729703194672286980/?region=TW&mid=6729693420148804363&u_code=17l5j0dee&titleType=title'
+headers = {
+'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36',
 }
-_para = {'name': ['name'], 'age': ['age'], 'marjor': ['marjor', 'two'], 'time': [], 'marjor2': ['marjor2', 'two'], 'marjor3': ['marjor3', 'two']}
-print(parse_para(_data, _para))
+r = requests.get(url, headers=headers)
+download_url = re.findall('playAddr: "(.*?)"', r.text)[0]
+r = requests.get(download_url, headers=headers)
+print(download_url)
+with open(f'D:/PycharmProjects/Douyin/source/video/{uuid.uuid4().hex}.mp4', 'wb') as f:
+    f.write(r.content)
+    f.close()
