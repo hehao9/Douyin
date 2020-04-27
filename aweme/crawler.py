@@ -63,6 +63,7 @@ def response(flow):
                 'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
                 'AUTHOR_USER_ID': ['author_user_id'],
                 'AWEME_ID': ['aweme_id'],
+                'AWEME_URL': ['share_url'],
             }
             aweme_list.append(parse_para(aweme, para))
         append_csv(aweme_list)
