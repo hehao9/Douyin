@@ -60,8 +60,6 @@ def response(flow):
                 'COMMENT_CONTANT': [],
                 'REPEAT_COUNT': ['statistics', 'share_count'],
                 'LIKE_NUM': ['statistics', 'digg_count'],
-                'SAME_CITY': [],
-                'FIRST_PAGE': [],
                 'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
                 'AUTHOR_USER_ID': ['author_user_id'],
                 'AWEME_ID': ['aweme_id'],

@@ -63,8 +63,7 @@ def response(flow):
             'BE_PRAISED_NUM': user.get('total_favorited'),  # 获赞数
             'WORKS_NUM': user.get('aweme_count'),
             'DYNAMIC': [],  # 近期发布过的视频
-            'FAVORITE_WORKS': [],
-            'FRIENDS_LIST': [], }
+            'FAVORITE_WORKS': [], }
         append_csv([_user])
     elif '/aweme/v1/aweme/post' in flow.request.url:  # 最新视频
         user_list = read_csv()
@@ -84,8 +83,6 @@ def response(flow):
                             'COMMENT_CONTANT': [],
                             'REPEAT_COUNT': ['statistics', 'share_count'],
                             'LIKE_NUM': ['statistics', 'digg_count'],
-                            'SAME_CITY': [],
-                            'FIRST_PAGE': [],
                             'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
                             'AUTHOR_USER_ID': ['author_user_id'],
                             'AWEME_ID': ['aweme_id'],
@@ -112,8 +109,6 @@ def response(flow):
                             'COMMENT_CONTANT': [],
                             'REPEAT_COUNT': ['statistics', 'share_count'],
                             'LIKE_NUM': ['statistics', 'digg_count'],
-                            'SAME_CITY': [],
-                            'FIRST_PAGE': [],
                             'POST_USER_IMAGE': ['author', 'avatar_thumb', 'url_list'],
                             'AUTHOR_USER_ID': ['author_user_id'],
                             'AWEME_ID': ['aweme_id'],
