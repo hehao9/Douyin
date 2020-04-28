@@ -41,7 +41,7 @@ wait.until(EC.presence_of_element_located((By.ID, 'com.ss.android.ugc.aweme:id/a
 # 点击视频选项卡
 wait.until(EC.presence_of_element_located((By.XPATH, "//*[@text='用户']"))).click()
 # 循环
-for p in range(2):
+for p in range(1):
     # 点击进入第1个用户
     time.sleep(1)
     wait.until(EC.presence_of_element_located(

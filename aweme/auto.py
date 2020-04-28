@@ -44,7 +44,7 @@ wait.until(EC.presence_of_element_located((By.XPATH, "//*[@text='视频']"))).cl
 wait.until(EC.presence_of_element_located(
     (By.XPATH, "//*[@resource-id='com.ss.android.ugc.aweme:id/o7']/android.widget.FrameLayout[1]"))).click()
 # 循环
-for n in range(2):
+for n in range(1):
     # 点击查看评论
     time.sleep(1)
     driver.tap([(668, 876)], 500)
